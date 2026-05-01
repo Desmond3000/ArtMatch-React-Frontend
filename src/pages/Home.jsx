@@ -3,8 +3,55 @@ import { useNavigate, Link } from 'react-router-dom'
 import bgVideo from '../assets/BG.mp4'
 import logo from '../assets/LOGO1.png'
 import accIcon from '../assets/ACC_LOGO.png'
-
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import './Home.css'
+
+
+function TiltImage() {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  // Convert mouse position to rotation
+  const rotateX = useTransform(y, [-100, 100], [6, -6])
+  const rotateY = useTransform(x, [-100, 100], [-6, 6])
+
+  // Add spring for smoothness
+  const springRotateX = useSpring(rotateX, { stiffness: 80, damping: 25 })
+  const springRotateY = useSpring(rotateY, { stiffness: 80, damping: 25 })
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    x.set(e.clientX - centerX)
+    y.set(e.clientY - centerY)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <div
+      style={{ perspective: 1000, padding: '20px' }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <motion.div
+        className="modal-image"
+        style={{
+          rotateX: springRotateX,
+          rotateY: springRotateY,
+          transformStyle: 'preserve-3d',
+          borderRadius: '8px',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        }}
+        whileHover={{ scale: 1.01 }}
+      />
+    </div>
+  )
+}
 
 export default function Home() {
   const navigate = useNavigate()
@@ -195,7 +242,7 @@ export default function Home() {
             </div>
 
             {/* Image */}
-            <div className="modal-image"></div>
+              <TiltImage />
 
             {/* Bottom info */}
             <div className="modal-footer">

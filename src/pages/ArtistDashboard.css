@@ -100,6 +100,15 @@
   gap: 2px;
 }
 
+.grid-label {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
 .card {
   cursor: pointer;
   background: #f0f0f0;

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/LOGO1.png'
 import accLogo from '../assets/ACC_LOGO.png'
 import './ArtistDashboard.css'
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 
 const savedPaintings = Array(12).fill(null).map((_, i) => ({
   id: i,
@@ -10,9 +11,55 @@ const savedPaintings = Array(12).fill(null).map((_, i) => ({
   artist: 'Artist',
 }))
 
+// ❌ REMOVE THIS LINE — it was here (outside any function)
+// const [isSaved, setIsSaved] = useState(true)
+
+function TiltImage() {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const rotateX = useTransform(y, [-100, 100], [6, -6])
+  const rotateY = useTransform(x, [-100, 100], [-6, 6])
+  const springRotateX = useSpring(rotateX, { stiffness: 80, damping: 25 })
+  const springRotateY = useSpring(rotateY, { stiffness: 80, damping: 25 })
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    x.set(e.clientX - centerX)
+    y.set(e.clientY - centerY)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <div
+      style={{ perspective: 1000, padding: '20px' }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <motion.div
+        className="modal-image"
+        style={{
+          rotateX: springRotateX,
+          rotateY: springRotateY,
+          transformStyle: 'preserve-3d',
+          borderRadius: '8px',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        }}
+        whileHover={{ scale: 1.01 }}
+      />
+    </div>
+  )
+}
+
 export default function ViewerProfile() {
   const navigate = useNavigate()
-  const [selectedPainting, setSelectedPainting] = useState(null) // ← was missing
+  const [selectedPainting, setSelectedPainting] = useState(null)
+  const [isSaved, setIsSaved] = useState(true) 
 
   return (
     <div className="page">
@@ -54,7 +101,7 @@ export default function ViewerProfile() {
               <div
                 className="card"
                 key={painting.id}
-                onClick={() => setSelectedPainting(painting)} // ← fixed
+                onClick={() => setSelectedPainting(painting)}
               >
                 <div className="card-image"></div>
                 <div className="card-info">
@@ -67,7 +114,6 @@ export default function ViewerProfile() {
         </div>
       </div>
 
-      {/* Modal — moved outside dashboard div */}
       {selectedPainting && (
         <div className="modal-overlay" onClick={() => setSelectedPainting(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -85,12 +131,17 @@ export default function ViewerProfile() {
               </div>
               <div className="modal-actions">
                 <button className="modal-btn">Follow</button>
-                <button className="modal-btn save-btn-modal">💾 Save</button>
+                <button
+                  className={`modal-btn ${isSaved ? 'saved-active' : 'save-btn-modal'}`}
+                  onClick={() => setIsSaved(!isSaved)}
+                >
+                  {isSaved ? '💾 Saved' : '💾 Save'}
+                </button>
                 <button className="modal-close" onClick={() => setSelectedPainting(null)}>✕</button>
               </div>
             </div>
 
-            <div className="modal-image"></div>
+            <TiltImage />
 
             <div className="modal-footer">
               <h2 className="modal-title">{selectedPainting.title}</h2>
