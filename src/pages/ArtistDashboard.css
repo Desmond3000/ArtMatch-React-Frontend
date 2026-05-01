@@ -179,3 +179,43 @@
 .edit-btn:hover {
   background-color: #FE5D26;
 }
+
+.card-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;      
+  object-position: center; 
+  background: #d9d9d9;
+}
+
+.dashboard-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0;
+  justify-content: center;
+}
+
+.dashboard-tab {
+  padding: 10px 24px;
+  background: none;
+  border: none;
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.dashboard-tab.active {
+  color: #1a1a2e;
+  border-bottom-color: #FE5D26;
+}
+
+.dashboard-tab:hover:not(.active) {
+  color: #1a1a2e;
+}

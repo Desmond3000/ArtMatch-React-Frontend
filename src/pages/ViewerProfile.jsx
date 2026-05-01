@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/LOGO1.png'
 import accLogo from '../assets/ACC_LOGO.png'
+import heartEmpty from '../assets/Empty_Heart.png'
+import heartFilled from '../assets/Full_Heart.png'
+import saveEmpty from '../assets/Empty_bm.png'
+import saveFilled from '../assets/Full_bm.png'
 import './ArtistDashboard.css'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 
@@ -9,10 +13,8 @@ const savedPaintings = Array(12).fill(null).map((_, i) => ({
   id: i,
   title: 'Title',
   artist: 'Artist',
+  images: [null, null, null]
 }))
-
-// ❌ REMOVE THIS LINE — it was here (outside any function)
-// const [isSaved, setIsSaved] = useState(true)
 
 function TiltImage() {
   const x = useMotionValue(0)
@@ -59,8 +61,11 @@ function TiltImage() {
 export default function ViewerProfile() {
   const navigate = useNavigate()
   const [selectedPainting, setSelectedPainting] = useState(null)
-  const [isSaved, setIsSaved] = useState(true) 
-
+  const [isLiked, setIsLiked] = useState(false)
+  const [likeCount, setLikeCount] = useState(0)
+  const [isSaved, setIsSaved] = useState(true)
+  const [saveCount, setSaveCount] = useState(1)
+  const [currentImage, setCurrentImage] = useState(0)
   return (
     <div className="page">
       <nav className="navbar">
@@ -101,7 +106,7 @@ export default function ViewerProfile() {
               <div
                 className="card"
                 key={painting.id}
-                onClick={() => setSelectedPainting(painting)}
+                onClick={() => {setSelectedPainting(painting); setCurrentImage(0)}}
               >
                 <div className="card-image"></div>
                 <div className="card-info">
@@ -117,6 +122,8 @@ export default function ViewerProfile() {
       {selectedPainting && (
         <div className="modal-overlay" onClick={() => setSelectedPainting(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
+
+            {/* Header — no save button here anymore */}
             <div className="modal-header">
               <div
                 className="modal-artist-info"
@@ -131,26 +138,62 @@ export default function ViewerProfile() {
               </div>
               <div className="modal-actions">
                 <button className="modal-btn">Follow</button>
-                <button
-                  className={`modal-btn ${isSaved ? 'saved-active' : 'save-btn-modal'}`}
-                  onClick={() => setIsSaved(!isSaved)}
-                >
-                  {isSaved ? '💾 Saved' : '💾 Save'}
-                </button>
                 <button className="modal-close" onClick={() => setSelectedPainting(null)}>✕</button>
               </div>
             </div>
 
-            <TiltImage />
+            <div className="model-image-wrapper">
+              <TiltImage />
+              {selectedPainting.images?.length > 1 && (
+                <div className="image-nav">
+                  <button
+                  className='image-nav-btn'
+                  onClick={() => setCurrentImage(i => i - 1)}
+                  disabled={currentImage === 0}>‹</button>
+                  <span className='image-nav-count'>
+                    {currentImage + 1} / {selectedPainting.images.length}
+                  </span>
+                  <button
+                  className='image-nav-btn'
+                  onClick={() => setCurrentImage(i => i + 1)}
+                  disabled={currentImage === selectedPainting.images.length - 1}>›</button>
+                </div>
+              )}
+              </div>
 
+            {/* Footer — icon reactions */}
             <div className="modal-footer">
+              <div className="modal-reactions">
+                <button
+                  className="icon-btn"
+                  onClick={() => {
+                    setIsLiked(!isLiked)
+                    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
+                  }}
+                >
+                  <img src={isLiked ? heartFilled : heartEmpty} alt="like" className="reaction-icon" />
+                  <span>{likeCount}</span>
+                </button>
+
+                <button
+                  className="icon-btn"
+                  onClick={() => {
+                    setIsSaved(!isSaved)
+                    setSaveCount(isSaved ? saveCount - 1 : saveCount + 1)
+                  }}
+                >
+                  <img src={isSaved ? saveFilled : saveEmpty} alt="save" className="reaction-icon" />
+                  <span>{saveCount}</span>
+                </button>
+              </div>
+
               <h2 className="modal-title">{selectedPainting.title}</h2>
-              <p className="modal-description">[Painting description goes here]</p>
+              <p className="modal-description">[Painting description]</p>
               <div className="modal-meta">
-                <span>❤️ 0 Appreciations</span>
                 <span>👁️ 0 Views</span>
               </div>
             </div>
+
           </div>
         </div>
       )}

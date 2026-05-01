@@ -3,19 +3,18 @@ import { useNavigate, Link } from 'react-router-dom'
 import bgVideo from '../assets/BG.mp4'
 import logo from '../assets/LOGO1.png'
 import accIcon from '../assets/ACC_LOGO.png'
+import heartEmpty from '../assets/Empty_Heart.png'
+import heartFilled from '../assets/Full_Heart.png'
+import saveEmpty from '../assets/Empty_bm.png'
+import saveFilled from '../assets/Full_bm.png'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import './Home.css'
-
 
 function TiltImage() {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
-
-  // Convert mouse position to rotation
   const rotateX = useTransform(y, [-100, 100], [6, -6])
   const rotateY = useTransform(x, [-100, 100], [-6, 6])
-
-  // Add spring for smoothness
   const springRotateX = useSpring(rotateX, { stiffness: 80, damping: 25 })
   const springRotateY = useSpring(rotateY, { stiffness: 80, damping: 25 })
 
@@ -59,10 +58,14 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
   const [selectedPainting, setSelectedPainting] = useState(null)
+  const [isLiked, setIsLiked] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [likeCount, setLikeCount] = useState(0)
+  const [saveCount, setSaveCount] = useState(0)
+  const [currentImage, setCurrentImage] = useState(0) // ← carousel index
 
-  // ← Read role and username saved during registration
   const role = localStorage.getItem('role')
-  const username = localStorage.getItem('username') // save this during register too
+  const username = localStorage.getItem('username')
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -76,33 +79,37 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [])
 
+  // ← images array added to each painting
   const paintings = Array(16).fill(null).map((_, i) => ({
     id: i,
     title: 'Title',
     artist: 'Artist',
+    images: [null, null, null] // ← 3 placeholder images, swap with real URLs later
   }))
 
-
-  // ← Route to correct profile page based on role
   const handleProfileClick = () => {
-    if (role === 'artist') {
-      navigate('/artist-dashboard')
-    } else {
-      navigate('/viewer-profile')
-    }
+    role === 'artist' ? navigate('/artist-dashboard') : navigate('/viewer-profile')
   }
 
-  const allArtists = Array(8).fill(null).map((_, i) => ({
-  id: i,
-  name: `Artist ${i + 1}`,
-  handle: `@artist${i + 1}`,
-  headline: 'Digital Artist & Illustrator',
-  }))
+  const allArtists = [
+    { id: 0, name: 'Maria Santos',   handle: '@mariasantos',  headline: 'Digital Artist & Illustrator' },
+    { id: 1, name: 'Juan dela Cruz', handle: '@juandc',       headline: 'Oil Painter & Muralist' },
+    { id: 2, name: 'Lena Park',      handle: '@lenapark',     headline: 'Watercolor & Concept Art' },
+    { id: 3, name: 'Carlos Reyes',   handle: '@carlosreyes',  headline: 'Sculptor & Mixed Media' },
+    { id: 4, name: 'Anika Torres',   handle: '@anikat',       headline: 'Street Art & Graffiti' },
+    { id: 5, name: 'Ben Villanueva', handle: '@benv',         headline: 'Portrait & Character Design' },
+    { id: 6, name: 'Sofia Mendoza',  handle: '@sofiamendoza', headline: 'Abstract & Expressionism' },
+    { id: 7, name: 'Rico Tan',       handle: '@ricotan',      headline: 'Photography & Digital Art' },
+  ]
 
-// Filter artists by search query
   const filteredArtists = allArtists.filter(a =>
-  a.name.toLowerCase().includes(search.toLowerCase()) ||
-  a.handle.toLowerCase().includes(search.toLowerCase())
+    a.name.toLowerCase().includes(search.toLowerCase()) ||
+    a.handle.toLowerCase().includes(search.toLowerCase())
+  )
+
+  const filteredPaintings = paintings.filter(p =>
+    p.title.toLowerCase().includes(search.toLowerCase()) ||
+    p.artist.toLowerCase().includes(search.toLowerCase())
   )
 
   const isSearching = search.trim().length > 0
@@ -114,12 +121,10 @@ export default function Home() {
           <source src={bgVideo} type="video/mp4" />
         </video>
 
-        {/* Navbar */}
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
           <Link to="/home">
             <img src={logo} alt="ArtMatch Logo" className="logo" />
           </Link>
-
           <div className="profile-wrapper">
             <img
               src={accIcon}
@@ -132,31 +137,25 @@ export default function Home() {
                 <div className="dropdown-header">
                   <img src={accIcon} className="dropdown-avatar" />
                   <div>
-                    {/* ← Now shows real values from localStorage */}
                     <p className="dropdown-name">{username || 'Name'}</p>
                     <p className="dropdown-role">{role === 'artist' ? 'Artist' : 'Viewer'}</p>
                   </div>
                 </div>
                 <hr />
-                {/* ← Routes to correct profile based on role */}
                 <p className="dropdown-item" onClick={handleProfileClick}>Profile</p>
                 <p className="dropdown-item" onClick={() => navigate('/edit-profile')}>Settings</p>
-                <p className="dropdown-item" onClick={() => {
-                  localStorage.clear() // ← clears role + token on sign out
-                  navigate('/')
-                }}>Sign Out</p>
+                <p className="dropdown-item" onClick={() => { localStorage.clear(); navigate('/') }}>Sign Out</p>
               </div>
             )}
           </div>
         </nav>
 
-        {/* Header */}
         <div className="header">
           <h1 className="brand">ArtMatch</h1>
           <div className="search-wrapper">
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Search artists or artworks"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="search-input"
@@ -167,52 +166,69 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Search Results — shows profiles */}
-{isSearching ? (
-  <div className="search-results">
-    <p className="results-label">Results for "{search}"</p>
-    {filteredArtists.length === 0 ? (
-      <p className="no-results">No artists found.</p>
-    ) : (
-      <div className="artist-list">
-        {filteredArtists.map((artist) => (
-          <div
-            key={artist.id}
-            className="artist-card"
-            onClick={() => navigate('/artist-dashboard')}
-          >
-            <div className="artist-card-avatar"></div>
-            <div className="artist-card-info">
-              <p className="artist-card-name">{artist.name}</p>
-              <p className="artist-card-handle">{artist.handle}</p>
-              <p className="artist-card-headline">{artist.headline}</p>
-            </div>
-            <button className="artist-follow-btn">Follow</button>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-) : (
-  /* Normal Painting Grid */
-  <div className="grid">
-    {paintings.map((painting) => (
-      <div
-        key={painting.id}
-        className="card"
-        onClick={() => setSelectedPainting(painting)}
-      >
-        <div className="card-image"></div>
-        <div className="card-info">
-          <p className="card-title">{painting.title}</p>
-          <p className="card-artist">{painting.artist}</p>
-        </div>
-      </div>
-    ))}
-  </div>
-)}
+      {isSearching ? (
+        <div className="search-results">
+          <p className="results-label">Results for "{search}"</p>
 
-      {/* ← Only artists see the + button */}
+          {filteredArtists.length > 0 && (
+            <>
+              <p className="search-section-label">Artists</p>
+              <div className="artist-list">
+                {filteredArtists.map((artist) => (
+                  <div key={artist.id} className="artist-card" onClick={() => navigate('/artist-dashboard')}>
+                    <div className="artist-card-avatar"></div>
+                    <div className="artist-card-info">
+                      <p className="artist-card-name">{artist.name}</p>
+                      <p className="artist-card-handle">{artist.handle}</p>
+                      <p className="artist-card-headline">{artist.headline}</p>
+                    </div>
+                    <button className="artist-follow-btn">Follow</button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {filteredPaintings.length > 0 && (
+            <>
+              <p className="search-section-label">Artworks</p>
+              <div className="grid">
+                {filteredPaintings.map((painting) => (
+                  <div key={painting.id} className="card"
+                    onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
+                  >
+                    <div className="card-image"></div>
+                    <div className="card-info">
+                      <p className="card-title">{painting.title}</p>
+                      <p className="card-artist">{painting.artist}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {filteredArtists.length === 0 && filteredPaintings.length === 0 && (
+            <p className="no-results">No results found.</p>
+          )}
+        </div>
+      ) : (
+        <div className="grid">
+          {paintings.map((painting) => (
+            <div key={painting.id} className="card"
+              // ← reset carousel index when opening a new painting
+              onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
+            >
+              <div className="card-image"></div>
+              <div className="card-info">
+                <p className="card-title">{painting.title}</p>
+                <p className="card-artist">{painting.artist}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {role === 'artist' && (
         <button className="fab" onClick={() => navigate('/post')}>+</button>
       )}
@@ -220,14 +236,12 @@ export default function Home() {
       {selectedPainting && (
         <div className="modal-overlay" onClick={() => setSelectedPainting(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-
-            {/* Top bar */}
             <div className="modal-header">
-              <div className="modal-artist-info"
-              onClick={() => {setSelectedPainting(null)       // close the modal first
-              navigate('/artist-dashboard')
-              }}
-              style={{cursor: 'pointer'}}>
+              <div
+                className="modal-artist-info"
+                onClick={() => { setSelectedPainting(null); navigate('/artist-dashboard') }}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="modal-avatar"></div>
                 <div>
                   <p className="modal-artist-name">{selectedPainting.artist}</p>
@@ -236,24 +250,69 @@ export default function Home() {
               </div>
               <div className="modal-actions">
                 <button className="modal-btn">Follow</button>
-                <button className="modal-btn save-btn-modal">💾 Save</button>
                 <button className="modal-close" onClick={() => setSelectedPainting(null)}>✕</button>
               </div>
             </div>
 
-            {/* Image */}
+            {/* ← Carousel wrapper */}
+            <div className="modal-image-wrapper">
               <TiltImage />
 
-            {/* Bottom info */}
+              {/* Only show nav if more than 1 image */}
+              {selectedPainting.images?.length > 1 && (
+                <div className="image-nav">
+                  <button
+                    className="image-nav-btn"
+                    onClick={() => setCurrentImage(i => i - 1)}
+                    disabled={currentImage === 0}
+                  >
+                    ‹
+                  </button>
+                  <span className="image-nav-count">
+                    {currentImage + 1} / {selectedPainting.images.length}
+                  </span>
+                  <button
+                    className="image-nav-btn"
+                    onClick={() => setCurrentImage(i => i + 1)}
+                    disabled={currentImage === selectedPainting.images.length - 1}
+                  >
+                    ›
+                  </button>
+                </div>
+              )}
+            </div>
+
             <div className="modal-footer">
+              <div className="modal-reactions">
+                <button
+                  className="icon-btn"
+                  onClick={() => {
+                    setIsLiked(!isLiked)
+                    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
+                  }}
+                >
+                  <img src={isLiked ? heartFilled : heartEmpty} alt="like" className="reaction-icon" />
+                  <span>{likeCount}</span>
+                </button>
+
+                <button
+                  className="icon-btn"
+                  onClick={() => {
+                    setIsSaved(!isSaved)
+                    setSaveCount(isSaved ? saveCount - 1 : saveCount + 1)
+                  }}
+                >
+                  <img src={isSaved ? saveFilled : saveEmpty} alt="save" className="reaction-icon" />
+                  <span>{saveCount}</span>
+                </button>
+              </div>
+
               <h2 className="modal-title">{selectedPainting.title}</h2>
-              <p className="modal-description">[Painting description goes here]</p>
+              <p className="modal-description">[Painting description]</p>
               <div className="modal-meta">
-                <span>❤️ 0 Appreciations</span>
                 <span>👁️ 0 Views</span>
               </div>
             </div>
-
           </div>
         </div>
       )}

@@ -480,3 +480,91 @@ hr {
   border-color: #FE5D26;
   color: white;
 }
+
+.icon-btn{
+  display:flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s;
+}
+
+.icon-btn span{
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.icon-btn:hover{
+  transform: scale(1.15);
+}
+
+.reaction-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.modal-reactions{
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-section-label {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  margin: 20px 0 10px;
+}
+
+.card-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;      
+  object-position: center; 
+  background: #d9d9d9;
+}
+
+.modal-image-wrapper {
+  position: relative;
+}
+
+.image-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.image-nav-btn {
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-nav-btn:hover { background: #FE5D26; }
+.image-nav-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+.image-nav-count {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: #888;
+}
