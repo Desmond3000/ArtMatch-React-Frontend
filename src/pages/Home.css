@@ -1,0 +1,482 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  height: 350px;
+  margin-bottom: 40px;
+}
+
+.bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.navbar, .header {
+  position: relative;
+  z-index: 1;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.profile-wrapper {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  width: 200px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f9f9f9;
+}
+
+.dropdown-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.dropdown-name {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+}
+
+.dropdown-role {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+  color: #FE5D26;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 0;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 12px;
+  position:relative;
+  z-index: 1;
+}
+
+.brand {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 7rem;
+  font-weight: 900;
+  color: #FE5D26;
+  transition: font-size 0.3s ease;
+  filter: drop-shadow(0px 4px 10px rgba(255, 255, 255, 0.3));
+}
+
+.brand-small{
+  font-size: 1.2rem;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #ccc;
+  border-radius: 50px;
+  padding: 8px 16px;
+  width: 400px;
+  gap: 8px;
+  background: white;
+}
+
+.fab {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #FE5D26;
+  color: white;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(94, 92, 92, 0.3);
+  transition: background 0.2s;
+  z-index: 100;
+}
+
+.fab:hover {
+  background-color: #FE5D26;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+}
+
+.search-icon {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.section-title {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a2e;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  padding: 0 24px 24px;
+}
+
+.card {
+  cursor: pointer;
+  background: #f0f0f0;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card-image {
+  width: 100%;
+  height: 160px;
+  background-color: #d9d9d9;
+}
+
+.card-info {
+  padding: 8px;
+}
+
+.card-title {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1a1a2e;
+}
+
+.card-artist {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0 }
+  to   { transform: translateY(0);    opacity: 1 }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}
+
+.modal-artist-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #d9d9d9;
+}
+
+.modal-artist-name {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.modal-artist-handle {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-btn {
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: 1.5px solid #1a1a2e;
+  background: transparent;
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #1a1a2e;
+}
+
+.modal-btn:hover {
+  background: #1a1a2e;
+  color: white;
+}
+
+.save-btn-modal:hover {
+  background: #FE5D26;
+  border-color: #FE5D26;
+  color: white;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: #f0f0f0;
+  color: #1a1a2e;
+}
+
+.modal-image {
+  width: 100%;
+  height: 460px;
+  background: #d9d9d9;
+}
+
+.modal-footer {
+  padding: 24px;
+}
+
+.modal-title {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 1.4rem;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.modal-description {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.modal-meta {
+  display: flex;
+  gap: 20px;
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.modal-artist-info:hover .modal-artist-name {
+  color: #FE5D26;
+  transition: color 0.2s;
+}
+
+.search-results {
+  padding: 24px;
+}
+
+.results-label {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.no-results {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 1rem;
+  color: #aaa;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.artist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.artist-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.artist-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.artist-card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  flex-shrink: 0;
+}
+
+.artist-card-info {
+  flex: 1;
+}
+
+.artist-card-name {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.artist-card-handle {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.8rem;
+  color: #888;
+  margin: 2px 0;
+}
+
+.artist-card-headline {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0;
+}
+
+.artist-follow-btn {
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 1.5px solid #1a1a2e;
+  background: transparent;
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #1a1a2e;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.artist-follow-btn:hover {
+  background: #FE5D26;
+  border-color: #FE5D26;
+  color: white;
+}

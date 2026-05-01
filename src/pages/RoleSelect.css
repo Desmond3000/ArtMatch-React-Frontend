@@ -1,0 +1,135 @@
+.role-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.logo {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 48px;
+  z-index: 2;
+}
+
+.role-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.role-title {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 3rem;
+  color: #FE5D26;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.role-subtitle {
+  font-family: 'JosefinSans', sans-serif;
+  color: #FE5D26(255,255,255,0.85);
+  font-size: 1rem;
+  margin-bottom: 40px;
+}
+
+.role-cards {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.role-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 36px 28px;
+  width: 260px;
+  cursor: pointer;
+  color: #FE5D26;
+  transition: box-shadow 0.2s;
+}
+
+.role-card.featured {
+  background: rgba(254, 93, 38, 0.25);
+  border-color: #FE5D26;
+  box-shadow: 0 0 30px rgba(254, 93, 38, 0.3);
+}
+
+.role-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.role-card h2 {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.role-card p {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(16, 16, 16, 0.8);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.role-perks {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 24px;
+  text-align: left;
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: rgba(16, 16, 16, 0.8);
+}
+
+.perk-no {
+  color: rgba(255,255,255,0.4);
+}
+
+.role-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 50px;
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.viewer-btn {
+  background: white;
+  color: #1a1a2e;
+}
+
+.artist-btn {
+  background: #FE5D26;
+  color: white;
+}
+
+.role-btn:hover {
+  opacity: 0.85;
+}
