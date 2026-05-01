@@ -20,7 +20,7 @@ export default function Login() {
       return
     }
     // TODO: connect to real API later
-    navigate('/home')
+    navigate('/paintings')
   }
 
   return (

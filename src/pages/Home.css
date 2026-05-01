@@ -528,8 +528,6 @@ hr {
 .card-image {
   width: 100%;
   height: 220px;
-  object-fit: cover;      
-  object-position: center; 
   background: #d9d9d9;
 }
 
@@ -560,11 +558,23 @@ hr {
   justify-content: center;
 }
 
-.image-nav-btn:hover { background: #FE5D26; }
-.image-nav-btn:disabled { background: #ccc; cursor: not-allowed; }
+.image-nav-btn:hover { 
+  background: #FE5D26; 
+}
+
+.image-nav-btn:disabled { 
+  background: #ccc; 
+  cursor: not-allowed; 
+}
 
 .image-nav-count {
   font-family: 'JosefinSans', sans-serif;
   font-size: 0.85rem;
   color: #888;
+}
+
+.filter-btn-active {
+  background-color: #e85d04; /* or your brand orange */
+  color: white;
+  border-color: #e85d04;
 }

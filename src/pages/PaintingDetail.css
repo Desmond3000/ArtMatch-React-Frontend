@@ -1,0 +1,316 @@
+.detail-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.detail-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.detail-back-btn {
+  background: none;
+  border: 1.5px solid #1a1a2e;
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #1a1a2e;
+  transition: all 0.2s;
+}
+
+.detail-back-btn:hover {
+  background: #1a1a2e;
+  color: white;
+}
+
+.detail-container {
+  display: flex;
+  gap: 48px;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 24px;
+  align-items: flex-start;
+}
+
+/* Left */
+.detail-left {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-image-wrapper {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+}
+
+.detail-image {
+  width: 100%;
+  height: 520px;
+  object-fit: cover; 
+  background: #d9d9d9;
+  display: block;
+  color: transparent;
+}
+
+.image-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.image-nav-btn {
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-nav-btn:hover { background: #FE5D26; }
+.image-nav-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+.image-nav-count {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Right */
+.detail-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-artist {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.detail-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  flex-shrink: 0;
+}
+
+.detail-artist-info {
+  flex: 1;
+}
+
+.detail-artist-name {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.detail-artist-name:hover {
+  color: #FE5D26;
+}
+
+.detail-artist-handle {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0;
+}
+
+.detail-follow-btn {
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 1.5px solid #1a1a2e;
+  background: transparent;
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #1a1a2e;
+  transition: all 0.2s;
+}
+
+.detail-follow-btn:hover {
+  background: #FE5D26;
+  border-color: #FE5D26;
+  color: white;
+}
+
+.detail-follow-btn.following {
+  background: #1a1a2e;
+  color: white;
+}
+
+.detail-divider {
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.detail-reactions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s;
+}
+
+.icon-btn:hover { transform: scale(1.15); }
+
+.icon-btn span {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.reaction-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.detail-views {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.85rem;
+  color: #888;
+  margin-left: auto;
+}
+
+.detail-title {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 2rem;
+  color: #1a1a2e;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.detail-description {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.detail-category {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.category-tag {
+  padding: 6px 16px;
+  background: #f0f0f0;
+  border-radius: 50px;
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+/* Recommended */
+.detail-recommended {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 24px 60px;
+}
+
+.recommended-title {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 1.5rem;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.recommended-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: #eee;
+}
+
+.card {
+  background: white;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.card:hover { opacity: 0.85; }
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  background: #d9d9d9;
+  object-fit: cover;
+}
+
+.card-info {
+  padding: 10px 12px;
+}
+
+.card-title {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.card-artist {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.75rem;
+  color: #888;
+  margin: 2px 0 0;
+}
+
+.detail-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+  font-family: 'JosefinSans', sans-serif;
+  color: #888;
+}

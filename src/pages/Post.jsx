@@ -3,9 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/LOGO1.png'
 import accLogo from '../assets/ACC_LOGO.png'
 import imageLogo from '../assets/Image-logo.png'
-import textLogo from '../assets/Text-Logo.png'
-import urlLogo from '../assets/URL-Logo.png'
-import divLogo from '../assets/Div-Logo.png'
 import './Post.css'
 
 export default function Post() {
@@ -13,18 +10,16 @@ export default function Post() {
   const imageInputRef = useRef(null)
 
   const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('') // ← new
+  const [category, setCategory] = useState('')       // ← new
   const [tags, setTags] = useState('')
   const [coverImage, setCoverImage] = useState(null)
 
-  const triggerImageUpload = () => {
-    imageInputRef.current.click()
-  }
+  const triggerImageUpload = () => imageInputRef.current.click()
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
-    if (file) {
-      setCoverImage(URL.createObjectURL(file))
-    }
+    if (file) setCoverImage(URL.createObjectURL(file))
   }
 
   const submitPost = () => {
@@ -32,14 +27,17 @@ export default function Post() {
       alert('Title is required!')
       return
     }
-    console.log('Posting:', title, tags, coverImage)
+    if (!coverImage) {
+      alert('Please upload an image!')
+      return
+    }
+    console.log('Posting:', { title, description, category, tags, coverImage })
     // API call goes here later
     navigate('/artist-dashboard')
   }
 
   return (
     <div className="page">
-      {/* Navbar */}
       <nav className="navbar">
         <Link to="/home">
           <img src={logo} alt="ArtMatch Logo" className="logo" />
@@ -50,24 +48,9 @@ export default function Post() {
       <div className="post-container">
         {/* Toolbar */}
         <div className="toolbar">
-          <div className="tool-item">
+          <div className="tool-item" onClick={triggerImageUpload}>
             <img src={imageLogo} className="tool-icon-img" alt="Add Image" />
             <p className="tool-label">Add Image</p>
-          </div>
-
-          <div className="tool-item">
-            <img src={textLogo} className="tool-icon-img" alt="Add Text" />
-            <p className="tool-label">Add Text</p>
-          </div>
-
-          <div className="tool-item">
-            <img src={urlLogo} className="tool-icon-img" alt="Add Link" />
-            <p className="tool-label">Add Link</p>
-          </div>
-
-          <div className="tool-item">
-            <img src={divLogo} className="tool-icon-img" alt="Add Division" />
-            <p className="tool-label">Add Division</p>
           </div>
         </div>
 
@@ -94,7 +77,7 @@ export default function Post() {
           </div>
         </div>
 
-        {/* Form */}
+        {/* Title */}
         <div className="form-group">
           <label>Title <span className="required">(Required)</span></label>
           <input
@@ -106,15 +89,49 @@ export default function Post() {
           />
         </div>
 
+        {/* Description ← new */}
+        <div className="form-group">
+          <label>Description</label>
+          <textarea
+            placeholder="Describe your artwork..."
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            className="input textarea"
+          />
+        </div>
+
+        {/* Category ← new */}
+        <div className="form-group">
+          <label>Category</label>
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            className="input select"
+          >
+            <option value="">Select Category</option>
+            <option value="painting">Painting</option>
+            <option value="digital">Digital Art</option>
+            <option value="sculpture">Sculpture</option>
+            <option value="photography">Photography</option>
+            <option value="illustration">Illustration</option>
+            <option value="mixed-media">Mixed Media</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="oil">Oil Paint</option>
+            <option value="sketch">Sketch & Drawing</option>
+          </select>
+        </div>
+
+        {/* Tags */}
         <div className="form-group">
           <label>Tags</label>
           <input
             type="text"
-            placeholder="Tags"
+            placeholder="e.g. abstract, colorful, nature"
             value={tags}
             onChange={e => setTags(e.target.value)}
             className="input"
           />
+          <p className="input-hint">Separate tags with commas</p>
         </div>
 
         <button className="btn" onClick={submitPost}>Post</button>

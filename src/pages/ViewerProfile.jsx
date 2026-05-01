@@ -1,3 +1,6 @@
+//This is the viewer's (owner) view of their profile
+
+
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/LOGO1.png'
@@ -127,7 +130,7 @@ export default function ViewerProfile() {
             <div className="modal-header">
               <div
                 className="modal-artist-info"
-                onClick={() => { setSelectedPainting(null); navigate('/artist-dashboard') }}
+                onClick={() => { setSelectedPainting(null); navigate(`/artist/${selectedPainting.artistId}`) }}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="modal-avatar"></div>
@@ -142,24 +145,34 @@ export default function ViewerProfile() {
               </div>
             </div>
 
-            <div className="model-image-wrapper">
+            <div
+              className="modal-image-wrapper"
+              onClick={() => {
+                setSelectedPainting(null)
+                navigate(`/paintings/${selectedPainting.id}`, { state: { painting: selectedPainting } })
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               <TiltImage />
+
               {selectedPainting.images?.length > 1 && (
                 <div className="image-nav">
                   <button
-                  className='image-nav-btn'
-                  onClick={() => setCurrentImage(i => i - 1)}
-                  disabled={currentImage === 0}>‹</button>
-                  <span className='image-nav-count'>
+                    className="image-nav-btn"
+                    onClick={(e) => { e.stopPropagation(); setCurrentImage(i => i - 1) }}
+                    disabled={currentImage === 0}
+                  >‹</button>
+                  <span className="image-nav-count">
                     {currentImage + 1} / {selectedPainting.images.length}
                   </span>
                   <button
-                  className='image-nav-btn'
-                  onClick={() => setCurrentImage(i => i + 1)}
-                  disabled={currentImage === selectedPainting.images.length - 1}>›</button>
+                    className="image-nav-btn"
+                    onClick={(e) => { e.stopPropagation(); setCurrentImage(i => i + 1) }}
+                    disabled={currentImage === selectedPainting.images.length - 1}
+                  >›</button>
                 </div>
               )}
-              </div>
+            </div>
 
             {/* Footer — icon reactions */}
             <div className="modal-footer">
@@ -189,9 +202,6 @@ export default function ViewerProfile() {
 
               <h2 className="modal-title">{selectedPainting.title}</h2>
               <p className="modal-description">[Painting description]</p>
-              <div className="modal-meta">
-                <span>👁️ 0 Views</span>
-              </div>
             </div>
 
           </div>

@@ -1,22 +1,9 @@
-//This is the artist's (owner) view of their profile
-
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import logo from '../assets/LOGO1.png'
 import accLogo from '../assets/ACC_LOGO.png'
-import heartEmpty from '../assets/Empty_Heart.png'
-import heartFilled from '../assets/Full_Heart.png'
-import saveEmpty from '../assets/Empty_bm.png'
-import saveFilled from '../assets/Full_bm.png'
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import './ArtistDashboard.css'
-
-const paintings = Array(12).fill(null).map((_, i) => ({
-  id: i,
-  title: 'Title',
-  artist: 'Artist',
-  images: [null, null, null]
-}))
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 
 function TiltImage() {
   const x = useMotionValue(0)
@@ -60,20 +47,32 @@ function TiltImage() {
   )
 }
 
-export default function ArtistDashboard() {
+// Dummy data — replace with API call using the id later
+const dummyArtist = {
+  id: 1,
+  name: 'Maria Santos',
+  handle: '@mariasantos',
+  headline: 'Digital Artist & Illustrator',
+  bio: 'I paint sunsets and dreams.',
+  link: 'mariasantos.com',
+  following: 20,
+  followers: 150,
+  appreciations: 42,
+}
+
+const dummyPaintings = Array(12).fill(null).map((_, i) => ({
+  id: i,
+  title: 'Title',
+  artist: dummyArtist.name,
+  images: [null, null, null]
+}))
+
+export default function ArtistProfile() {
+  const { id } = useParams() // ← gets the artist id from the URL
   const navigate = useNavigate()
+  const [isFollowing, setIsFollowing] = useState(false)
   const [selectedPainting, setSelectedPainting] = useState(null)
-  const [isLiked, setIsLiked] = useState(false)
-  const [likeCount, setLikeCount] = useState(0)
-  const [isSaved, setIsSaved] = useState(false)
-  const [saveCount, setSaveCount] = useState(0)
-  const [activeTab, setActiveTab] = useState('mywork')
   const [currentImage, setCurrentImage] = useState(0)
-  const savedPaintings = Array(8).fill(null).map((_, i) => ({
-  id: i + 100,
-  title: 'Saved Title',
-  artist: 'Other Artist',
-  }))
 
   return (
     <div className="page">
@@ -88,62 +87,51 @@ export default function ArtistDashboard() {
         <div className="profile-section">
           <div className="profile-card">
             <img src={accLogo} className="avatar" alt="Avatar" />
-            <h2 className="username">[Username]</h2>
-            <p className="headline">[Headline]</p>
+            <h2 className="username">{dummyArtist.name}</h2>
+            <p className="headline">{dummyArtist.headline}</p>
+
             <div className="stats">
               <div className="stat">
-                <span className="stat-number">[n]</span>
+                <span className="stat-number">{dummyArtist.following}</span>
                 <span className="stat-label">Following</span>
               </div>
               <div className="stat">
-                <span className="stat-number">[n]</span>
+                <span className="stat-number">{dummyArtist.followers}</span>
                 <span className="stat-label">Followers</span>
               </div>
               <div className="stat">
-                <span className="stat-number">[n]</span>
+                <span className="stat-number">{dummyArtist.appreciations}</span>
                 <span className="stat-label">Appreciations</span>
               </div>
             </div>
-            <p className="bio">[Bio]</p>
-            <a href="#" className="link">[Link]</a>
-            <button className="edit-btn" onClick={() => navigate('/edit-profile')}>
-              Edit Profile
+
+            <p className="bio">{dummyArtist.bio}</p>
+            <a href="#" className="link">{dummyArtist.link}</a>
+
+            {/* ← Follow button instead of Edit Profile */}
+            <button
+              className="edit-btn"
+              onClick={() => setIsFollowing(!isFollowing)}
+              style={{ background: isFollowing ? '#888' : '' }}
+            >
+              {isFollowing ? 'Following' : 'Follow'}
             </button>
           </div>
         </div>
 
         <div className="grid-section">
-          {/* Tabs */}
-          <div className="dashboard-tabs">
-            <button
-              className={`dashboard-tab ${activeTab === 'mywork' ? 'active' : ''}`}
-              onClick={() => setActiveTab('mywork')}
-            >
-            My Artworks
-            </button>
-          <button
-            className={`dashboard-tab ${activeTab === 'saved' ? 'active' : ''}`}
-            onClick={() => setActiveTab('saved')}
-          >
-          Saved
-        </button>
-      </div>
-
-      <div className="grid">
-        {(activeTab === 'mywork' ? paintings : savedPaintings).map((painting) => (
-            <div
-            className="card"
-            key={painting.id}
-            onClick={() => {setSelectedPainting(painting); setCurrentImage(0)}}
-            >
-            <div className="card-image"></div>
-              <div className="card-info">
-              <p className="card-title">{painting.title}</p>
-              {activeTab === 'saved' && (
-              <p className="card-artist">{painting.artist}</p>
-              )}
+          <div className="grid">
+            {dummyPaintings.map((painting) => (
+              <div
+                className="card"
+                key={painting.id}
+                onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
+              >
+                <div className="card-image"></div>
+                <div className="card-info">
+                  <p className="card-title">{painting.title}</p>
+                </div>
               </div>
-            </div>
             ))}
           </div>
         </div>
@@ -152,21 +140,21 @@ export default function ArtistDashboard() {
       {selectedPainting && (
         <div className="modal-overlay" onClick={() => setSelectedPainting(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-
             <div className="modal-header">
-              <div
-                className="modal-artist-info"
-                onClick={() => { setSelectedPainting(null); navigate('/artist-dashboard') }}
-                style={{ cursor: 'pointer' }}
-              >
+              <div className="modal-artist-info">
                 <div className="modal-avatar"></div>
                 <div>
-                  <p className="modal-artist-name">{selectedPainting.artist}</p>
-                  <p className="modal-artist-handle">@handle</p>
+                  <p className="modal-artist-name">{dummyArtist.name}</p>
+                  <p className="modal-artist-handle">{dummyArtist.handle}</p>
                 </div>
               </div>
               <div className="modal-actions">
-                <button className="modal-btn">Follow</button>
+                <button
+                  className="modal-btn"
+                  onClick={() => setIsFollowing(!isFollowing)}
+                >
+                  {isFollowing ? 'Following' : 'Follow'}
+                </button>
                 <button className="modal-close" onClick={() => setSelectedPainting(null)}>✕</button>
               </div>
             </div>
@@ -201,32 +189,8 @@ export default function ArtistDashboard() {
             </div>
 
             <div className="modal-footer">
-              <div className="modal-reactions">
-                <button
-                  className="icon-btn"
-                  onClick={() => {
-                    setIsLiked(!isLiked)
-                    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
-                  }}
-                >
-                  <img src={isLiked ? heartFilled : heartEmpty} alt="like" className="reaction-icon" />
-                  <span>{likeCount}</span>
-                </button>
-
-                <button
-                  className="icon-btn"
-                  onClick={() => {
-                    setIsSaved(!isSaved)
-                    setSaveCount(isSaved ? saveCount - 1 : saveCount + 1)
-                  }}
-                >
-                  <img src={isSaved ? saveFilled : saveEmpty} alt="save" className="reaction-icon" />
-                  <span>{saveCount}</span>
-                </button>
-              </div>
-
               <h2 className="modal-title">{selectedPainting.title}</h2>
-              <p className="modal-description">[Painting description goes here]</p>
+              <p className="modal-description">[Painting description]</p>
             </div>
           </div>
         </div>

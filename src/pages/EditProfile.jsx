@@ -52,7 +52,7 @@ export default function EditProfile() {
     <div className="page">
       {/* Navbar */}
       <nav className="navbar">
-        <Link to="/home">
+        <Link to="/paintings">
           <img src={logo} alt="ArtMatch Logo" className="logo" />
         </Link>
         <img src={accLogo} alt="Profile" className="profile-icon" />

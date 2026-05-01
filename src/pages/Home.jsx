@@ -62,8 +62,10 @@ export default function Home() {
   const [isSaved, setIsSaved] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [saveCount, setSaveCount] = useState(0)
-  const [currentImage, setCurrentImage] = useState(0) // ← carousel index
-
+  const [currentImage, setCurrentImage] = useState(0)
+  const [filters, setFilters] = useState({ category: '', artist: '' })
+  const [filterMode, setFilterMode] = useState(null) // null | 'artists' | 'paintings'
+  
   const role = localStorage.getItem('role')
   const username = localStorage.getItem('username')
 
@@ -79,17 +81,14 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [])
 
-  // ← images array added to each painting
+  // ← paintings declared BEFORE filteredByCategory
   const paintings = Array(16).fill(null).map((_, i) => ({
     id: i,
     title: 'Title',
     artist: 'Artist',
-    images: [null, null, null] // ← 3 placeholder images, swap with real URLs later
+    category: 'digital',
+    images: [null, null, null]
   }))
-
-  const handleProfileClick = () => {
-    role === 'artist' ? navigate('/artist-dashboard') : navigate('/viewer-profile')
-  }
 
   const allArtists = [
     { id: 0, name: 'Maria Santos',   handle: '@mariasantos',  headline: 'Digital Artist & Illustrator' },
@@ -102,220 +101,278 @@ export default function Home() {
     { id: 7, name: 'Rico Tan',       handle: '@ricotan',      headline: 'Photography & Digital Art' },
   ]
 
+  // ← filteredByCategory declared AFTER paintings
+  const filteredByCategory = paintings.filter(p => {
+    if (filters.category && p.category !== filters.category) return false
+    if (filters.artist && p.artist !== filters.artist) return false
+    return true
+  })
+
   const filteredArtists = allArtists.filter(a =>
     a.name.toLowerCase().includes(search.toLowerCase()) ||
     a.handle.toLowerCase().includes(search.toLowerCase())
   )
 
-  const filteredPaintings = paintings.filter(p =>
+  const filteredPaintings = filteredByCategory.filter(p =>
     p.title.toLowerCase().includes(search.toLowerCase()) ||
     p.artist.toLowerCase().includes(search.toLowerCase())
   )
 
   const isSearching = search.trim().length > 0
 
-  return (
-    <div className="page">
-      <div className="hero">
-        <video className="bg-video" autoPlay muted loop playsInline>
-          <source src={bgVideo} type="video/mp4" />
-        </video>
+  const handleProfileClick = () => {
+    role === 'artist' ? navigate('/artist-dashboard') : navigate('/viewer-profile')
+  }
 
-        <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-          <Link to="/home">
-            <img src={logo} alt="ArtMatch Logo" className="logo" />
-          </Link>
-          <div className="profile-wrapper">
-            <img
-              src={accIcon}
-              alt="Profile"
-              className="profile-icon"
-              onClick={() => setShowDropdown(!showDropdown)}
-            />
-            {showDropdown && (
-              <div className="dropdown">
-                <div className="dropdown-header">
-                  <img src={accIcon} className="dropdown-avatar" />
-                  <div>
-                    <p className="dropdown-name">{username || 'Name'}</p>
-                    <p className="dropdown-role">{role === 'artist' ? 'Artist' : 'Viewer'}</p>
+  return (
+  <div className="page">
+    <div className="hero">
+      <video className="bg-video" autoPlay muted loop playsInline>
+        <source src={bgVideo} type="video/mp4" />
+      </video>
+
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+        <Link to="/home">
+          <img src={logo} alt="ArtMatch Logo" className="logo" />
+        </Link>
+        <div className="profile-wrapper">
+          <img
+            src={accIcon}
+            alt="Profile"
+            className="profile-icon"
+            onClick={() => setShowDropdown(!showDropdown)}
+          />
+          {showDropdown && (
+            <div className="dropdown">
+              <div className="dropdown-header">
+                <img src={accIcon} className="dropdown-avatar" />
+                <div>
+                  <p className="dropdown-name">{username || 'Name'}</p>
+                  <p className="dropdown-role">{role === 'artist' ? 'Artist' : 'Viewer'}</p>
+                </div>
+              </div>
+              <hr />
+              <p className="dropdown-item" onClick={handleProfileClick}>Profile</p>
+              <p className="dropdown-item" onClick={() => navigate('/edit-profile')}>Settings</p>
+              <p className="dropdown-item" onClick={() => { localStorage.clear(); navigate('/') }}>Sign Out</p>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      <div className="header">
+        <h1 className="brand">ArtMatch</h1>
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="Search artists or artworks"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="search-input"
+          />
+          <span className="search-icon">🔍</span>
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '12px' }}>
+          <button
+            className={`filter-btn ${filterMode === 'artists' ? 'filter-btn-active' : ''}`}
+            onClick={() => setFilterMode(filterMode === 'artists' ? null : 'artists')}
+          >
+            Artists
+          </button>
+          <button
+            className={`filter-btn ${filterMode === 'paintings' ? 'filter-btn-active' : ''}`}
+            onClick={() => setFilterMode(filterMode === 'paintings' ? null : 'paintings')}
+          >
+            Paintings
+          </button>
+        </div>
+
+        <p className="section-title">Recommended for you</p>
+      </div>
+    </div>
+
+    {isSearching ? (
+      <div className="search-results">
+        <p className="results-label">Results for "{search}"</p>
+
+        {filteredArtists.length > 0 && (
+          <>
+            <p className="search-section-label">Artists</p>
+            <div className="artist-list">
+              {filteredArtists.map((artist) => (
+                <div
+                  key={artist.id}
+                  className="artist-card"
+                  onClick={() => navigate(`/artist/${artist.id}`)}
+                >
+                  <div className="artist-card-avatar"></div>
+                  <div className="artist-card-info">
+                    <p className="artist-card-name">{artist.name}</p>
+                    <p className="artist-card-handle">{artist.handle}</p>
+                    <p className="artist-card-headline">{artist.headline}</p>
+                  </div>
+                  <button className="artist-follow-btn">Follow</button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {filteredPaintings.length > 0 && (
+          <>
+            <p className="search-section-label">Artworks</p>
+            <div className="grid">
+              {filteredPaintings.map((painting) => (
+                <div
+                  key={painting.id}
+                  className="card"
+                  onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
+                >
+                  <div className="card-image"></div>
+                  <div className="card-info">
+                    <p className="card-title">{painting.title}</p>
+                    <p className="card-artist">{painting.artist}</p>
                   </div>
                 </div>
-                <hr />
-                <p className="dropdown-item" onClick={handleProfileClick}>Profile</p>
-                <p className="dropdown-item" onClick={() => navigate('/edit-profile')}>Settings</p>
-                <p className="dropdown-item" onClick={() => { localStorage.clear(); navigate('/') }}>Sign Out</p>
-              </div>
-            )}
-          </div>
-        </nav>
+              ))}
+            </div>
+          </>
+        )}
 
-        <div className="header">
-          <h1 className="brand">ArtMatch</h1>
-          <div className="search-wrapper">
-            <input
-              type="text"
-              placeholder="Search artists or artworks"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="search-input"
-            />
-            <span className="search-icon">🔍</span>
-          </div>
-          <p className="section-title">Recommended for you</p>
-        </div>
+        {filteredArtists.length === 0 && filteredPaintings.length === 0 && (
+          <p className="no-results">No results found.</p>
+        )}
       </div>
 
-      {isSearching ? (
-        <div className="search-results">
-          <p className="results-label">Results for "{search}"</p>
-
-          {filteredArtists.length > 0 && (
-            <>
-              <p className="search-section-label">Artists</p>
-              <div className="artist-list">
-                {filteredArtists.map((artist) => (
-                  <div key={artist.id} className="artist-card" onClick={() => navigate('/artist-dashboard')}>
-                    <div className="artist-card-avatar"></div>
-                    <div className="artist-card-info">
-                      <p className="artist-card-name">{artist.name}</p>
-                      <p className="artist-card-handle">{artist.handle}</p>
-                      <p className="artist-card-headline">{artist.headline}</p>
-                    </div>
-                    <button className="artist-follow-btn">Follow</button>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {filteredPaintings.length > 0 && (
-            <>
-              <p className="search-section-label">Artworks</p>
-              <div className="grid">
-                {filteredPaintings.map((painting) => (
-                  <div key={painting.id} className="card"
-                    onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
-                  >
-                    <div className="card-image"></div>
-                    <div className="card-info">
-                      <p className="card-title">{painting.title}</p>
-                      <p className="card-artist">{painting.artist}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {filteredArtists.length === 0 && filteredPaintings.length === 0 && (
-            <p className="no-results">No results found.</p>
-          )}
-        </div>
-      ) : (
-        <div className="grid">
-          {paintings.map((painting) => (
-            <div key={painting.id} className="card"
-              // ← reset carousel index when opening a new painting
-              onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
+    ) : filterMode === 'artists' ? (
+      <div className="search-results">
+        <div className="artist-list">
+          {allArtists.map((artist) => (
+            <div
+              key={artist.id}
+              className="artist-card"
+              onClick={() => navigate(`/artist/${artist.id}`)}
             >
-              <div className="card-image"></div>
-              <div className="card-info">
-                <p className="card-title">{painting.title}</p>
-                <p className="card-artist">{painting.artist}</p>
+              <div className="artist-card-avatar"></div>
+              <div className="artist-card-info">
+                <p className="artist-card-name">{artist.name}</p>
+                <p className="artist-card-handle">{artist.handle}</p>
+                <p className="artist-card-headline">{artist.headline}</p>
               </div>
+              <button className="artist-follow-btn">Follow</button>
             </div>
           ))}
         </div>
-      )}
+      </div>
 
-      {role === 'artist' && (
-        <button className="fab" onClick={() => navigate('/post')}>+</button>
-      )}
-
-      {selectedPainting && (
-        <div className="modal-overlay" onClick={() => setSelectedPainting(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div
-                className="modal-artist-info"
-                onClick={() => { setSelectedPainting(null); navigate('/artist-dashboard') }}
-                style={{ cursor: 'pointer' }}
-              >
-                <div className="modal-avatar"></div>
-                <div>
-                  <p className="modal-artist-name">{selectedPainting.artist}</p>
-                  <p className="modal-artist-handle">@handle</p>
-                </div>
-              </div>
-              <div className="modal-actions">
-                <button className="modal-btn">Follow</button>
-                <button className="modal-close" onClick={() => setSelectedPainting(null)}>✕</button>
-              </div>
-            </div>
-
-            {/* ← Carousel wrapper */}
-            <div className="modal-image-wrapper">
-              <TiltImage />
-
-              {/* Only show nav if more than 1 image */}
-              {selectedPainting.images?.length > 1 && (
-                <div className="image-nav">
-                  <button
-                    className="image-nav-btn"
-                    onClick={() => setCurrentImage(i => i - 1)}
-                    disabled={currentImage === 0}
-                  >
-                    ‹
-                  </button>
-                  <span className="image-nav-count">
-                    {currentImage + 1} / {selectedPainting.images.length}
-                  </span>
-                  <button
-                    className="image-nav-btn"
-                    onClick={() => setCurrentImage(i => i + 1)}
-                    disabled={currentImage === selectedPainting.images.length - 1}
-                  >
-                    ›
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="modal-footer">
-              <div className="modal-reactions">
-                <button
-                  className="icon-btn"
-                  onClick={() => {
-                    setIsLiked(!isLiked)
-                    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
-                  }}
-                >
-                  <img src={isLiked ? heartFilled : heartEmpty} alt="like" className="reaction-icon" />
-                  <span>{likeCount}</span>
-                </button>
-
-                <button
-                  className="icon-btn"
-                  onClick={() => {
-                    setIsSaved(!isSaved)
-                    setSaveCount(isSaved ? saveCount - 1 : saveCount + 1)
-                  }}
-                >
-                  <img src={isSaved ? saveFilled : saveEmpty} alt="save" className="reaction-icon" />
-                  <span>{saveCount}</span>
-                </button>
-              </div>
-
-              <h2 className="modal-title">{selectedPainting.title}</h2>
-              <p className="modal-description">[Painting description]</p>
-              <div className="modal-meta">
-                <span>👁️ 0 Views</span>
-              </div>
+    ) : (
+      <div className="grid">
+        {paintings.map((painting) => (
+          <div
+            key={painting.id}
+            className="card"
+            onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
+          >
+            <div className="card-image"></div>
+            <div className="card-info">
+              <p className="card-title">{painting.title}</p>
+              <p className="card-artist">{painting.artist}</p>
             </div>
           </div>
+        ))}
+      </div>
+    )}
+
+    {role === 'artist' && (
+      <button className="fab" onClick={() => navigate('/post')}>+</button>
+    )}
+
+    {selectedPainting && (
+      <div className="modal-overlay" onClick={() => setSelectedPainting(null)}>
+        <div className="modal" onClick={(e) => e.stopPropagation()}>
+
+          <div className="modal-header">
+            <div
+              className="modal-artist-info"
+              onClick={() => { setSelectedPainting(null); navigate(`/artist/${selectedPainting.artistId || 1}`) }}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="modal-avatar"></div>
+              <div>
+                <p className="modal-artist-name">{selectedPainting.artist}</p>
+                <p className="modal-artist-handle">@handle</p>
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn">Follow</button>
+              <button className="modal-close" onClick={() => setSelectedPainting(null)}>✕</button>
+            </div>
+          </div>
+
+          <div
+            className="modal-image-wrapper"
+            onClick={() => {
+              setSelectedPainting(null)
+              navigate(`/paintings/${selectedPainting.id}`, { state: { painting: selectedPainting } })
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <TiltImage />
+
+            {selectedPainting.images?.length > 1 && (
+              <div className="image-nav">
+                <button
+                  className="image-nav-btn"
+                  onClick={(e) => { e.stopPropagation(); setCurrentImage(i => i - 1) }}
+                  disabled={currentImage === 0}
+                >‹</button>
+                <span className="image-nav-count">
+                  {currentImage + 1} / {selectedPainting.images.length}
+                </span>
+                <button
+                  className="image-nav-btn"
+                  onClick={(e) => { e.stopPropagation(); setCurrentImage(i => i + 1) }}
+                  disabled={currentImage === selectedPainting.images.length - 1}
+                >›</button>
+              </div>
+            )}
+          </div>
+
+          <div className="modal-footer">
+            <div className="modal-reactions">
+              <button
+                className="icon-btn"
+                onClick={() => {
+                  setIsLiked(!isLiked)
+                  setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
+                }}
+              >
+                <img src={isLiked ? heartFilled : heartEmpty} alt="like" className="reaction-icon" />
+                <span>{likeCount}</span>
+              </button>
+
+              <button
+                className="icon-btn"
+                onClick={() => {
+                  setIsSaved(!isSaved)
+                  setSaveCount(isSaved ? saveCount - 1 : saveCount + 1)
+                }}
+              >
+                <img src={isSaved ? saveFilled : saveEmpty} alt="save" className="reaction-icon" />
+                <span>{saveCount}</span>
+              </button>
+            </div>
+
+            <h2 className="modal-title">{selectedPainting.title}</h2>
+            <p className="modal-description">[Painting description]</p>
+            <div className="modal-meta">
+              <span>👁️ 0 Views</span>
+            </div>
+          </div>
+
         </div>
-      )}
-    </div>
-  )
-}
+      </div>
+    )}
+  </div>
+) }
