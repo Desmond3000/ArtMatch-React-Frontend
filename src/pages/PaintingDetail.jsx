@@ -34,13 +34,13 @@ export default function PaintingDetail() {
     return (
       <div className="detail-page">
         <nav className="detail-navbar">
-          <Link to="/home">
+          <Link to="/paintings">
             <img src={logo} alt="ArtMatch Logo" className="logo" />
           </Link>
         </nav>
         <div className="detail-not-found">
           <h2>Painting not found</h2>
-          <button className="detail-back-btn" onClick={() => navigate('/home')}>
+          <button className="detail-back-btn" onClick={() => navigate('/paintings')}>
             ← Back to Home
           </button>
         </div>
@@ -56,7 +56,7 @@ export default function PaintingDetail() {
       transition={{ duration: 0.4 }}
     >
       <nav className="detail-navbar">
-        <Link to="/home">
+        <Link to="/paintings">
           <img src={logo} alt="ArtMatch Logo" className="logo" />
         </Link>
         <button className="detail-back-btn" onClick={() => navigate(-1)}>

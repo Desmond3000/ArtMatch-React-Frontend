@@ -10,7 +10,7 @@ import saveFilled from '../assets/Full_bm.png'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import './Home.css'
 
-function TiltImage() {
+function TiltImage({src}) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useTransform(y, [-100, 100], [6, -6])
@@ -37,7 +37,9 @@ function TiltImage() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <motion.div
+      <motion.img
+        src={src}
+        alt="painting"
         className="modal-image"
         style={{
           rotateX: springRotateX,
@@ -58,13 +60,12 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
   const [selectedPainting, setSelectedPainting] = useState(null)
-  const [isLiked, setIsLiked] = useState(false)
-  const [isSaved, setIsSaved] = useState(false)
-  const [likeCount, setLikeCount] = useState(0)
-  const [saveCount, setSaveCount] = useState(0)
+  const [interactions, setInteractions] = useState({})
   const [currentImage, setCurrentImage] = useState(0)
-  const [filters, setFilters] = useState({ category: '', artist: '' })
-  const [filterMode, setFilterMode] = useState(null) // null | 'artists' | 'paintings'
+  const [filters, setFilters] = useState({ style: '', theme: '', artist: '' })
+  const [filterMode, setFilterMode] = useState('all') // all | 'artists' | 'styles' | 'themes'  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
   
   const role = localStorage.getItem('role')
   const username = localStorage.getItem('username')
@@ -81,15 +82,6 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [])
 
-  // ← paintings declared BEFORE filteredByCategory
-  const paintings = Array(16).fill(null).map((_, i) => ({
-    id: i,
-    title: 'Title',
-    artist: 'Artist',
-    category: 'digital',
-    images: [null, null, null]
-  }))
-
   const allArtists = [
     { id: 0, name: 'Maria Santos',   handle: '@mariasantos',  headline: 'Digital Artist & Illustrator' },
     { id: 1, name: 'Juan dela Cruz', handle: '@juandc',       headline: 'Oil Painter & Muralist' },
@@ -101,28 +93,74 @@ export default function Home() {
     { id: 7, name: 'Rico Tan',       handle: '@ricotan',      headline: 'Photography & Digital Art' },
   ]
 
+  const styles = ['watercolor', 'digital', 'oil', 'sketch']
+  const themes = ['nature', 'urban', 'portrait', 'abstract']
+
+  const paintings = Array(32).fill(null).map((_, i) => ({
+  id: i,
+  title: 'Title',
+  artist: allArtists[i % allArtists.length].name,
+  style: styles[i % styles.length],
+  theme: themes[i % themes.length],
+  images: [
+    'https://picsum.photos/400/300?random=' + i,
+    'https://picsum.photos/400/300?random=' + (i + 20),
+    'https://picsum.photos/400/300?random=' + (i + 40)
+  ]
+  }))
+
+  const isSearching = search.trim().length > 0
+
+
   // ← filteredByCategory declared AFTER paintings
-  const filteredByCategory = paintings.filter(p => {
-    if (filters.category && p.category !== filters.category) return false
-    if (filters.artist && p.artist !== filters.artist) return false
-    return true
+  const filtered = paintings.filter(p => {
+  if (filterMode === 'styles' && isSearching)
+    return p.style?.toLowerCase().includes(search.toLowerCase())
+  if (filterMode === 'themes' && isSearching)
+    return p.theme?.toLowerCase().includes(search.toLowerCase())
+  return true
   })
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  const paginated = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
 
   const filteredArtists = allArtists.filter(a =>
     a.name.toLowerCase().includes(search.toLowerCase()) ||
     a.handle.toLowerCase().includes(search.toLowerCase())
   )
 
-  const filteredPaintings = filteredByCategory.filter(p =>
+  const filteredPaintings = paintings.filter(p => {
+  if (filterMode === 'styles')
+    return p.style?.toLowerCase().includes(search.toLowerCase())
+  if (filterMode === 'themes')
+    return p.theme?.toLowerCase().includes(search.toLowerCase())
+  return (
     p.title.toLowerCase().includes(search.toLowerCase()) ||
     p.artist.toLowerCase().includes(search.toLowerCase())
   )
+  })
 
-  const isSearching = search.trim().length > 0
 
   const handleProfileClick = () => {
     role === 'artist' ? navigate('/artist-dashboard') : navigate('/viewer-profile')
   }
+
+  const handleFilterChange = (key, value) => {
+  setFilters(prev => ({ ...prev, [key]: value }))
+  setCurrentPage(1)
+  }
+
+    const currentInteraction = selectedPainting
+      ? interactions[selectedPainting.id] || {
+          liked: false,
+          likeCount: 0,
+          saved: false,
+          saveCount: 0
+        }
+      : null
 
   return (
   <div className="page">
@@ -165,7 +203,12 @@ export default function Home() {
         <div className="search-wrapper">
           <input
             type="text"
-            placeholder="Search artists or artworks"
+            placeholder={
+              filterMode === 'artists' ? 'Search artists...' :
+              filterMode === 'styles'  ? 'Search by style (e.g. Watercolor, Digital)...' :
+              filterMode === 'themes'  ? 'Search by theme (e.g. Nature, Urban)...' :
+              'Search artists or artworks'
+            }
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="search-input"
@@ -173,39 +216,65 @@ export default function Home() {
           <span className="search-icon">🔍</span>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '12px' }}>
-          <button
-            className={`filter-btn ${filterMode === 'artists' ? 'filter-btn-active' : ''}`}
-            onClick={() => setFilterMode(filterMode === 'artists' ? null : 'artists')}
-          >
-            Artists
-          </button>
-          <button
-            className={`filter-btn ${filterMode === 'paintings' ? 'filter-btn-active' : ''}`}
-            onClick={() => setFilterMode(filterMode === 'paintings' ? null : 'paintings')}
-          >
-            Paintings
-          </button>
-        </div>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '12px', flexWrap: 'wrap' }}>
+        <button
+          className={`filter-btn ${filterMode === 'artists' ? 'filter-btn-active' : ''}`}
+          onClick={() => { setFilterMode(filterMode === 'artists' ? null : 'artists'); setCurrentPage(1) }}
+        >
+          Artists
+        </button>
+        <button
+          className={`filter-btn ${filterMode === 'styles' ? 'filter-btn-active' : ''}`}
+          onClick={() => { setFilterMode(filterMode === 'styles' ? null : 'styles'); setCurrentPage(1) }}
+        >
+          Styles
+        </button>
+        <button
+          className={`filter-btn ${filterMode === 'themes' ? 'filter-btn-active' : ''}`}
+          onClick={() => { setFilterMode(filterMode === 'themes' ? null : 'themes'); setCurrentPage(1) }}
+        >
+          Themes
+        </button>
+      </div>
+
 
         <p className="section-title">Recommended for you</p>
       </div>
     </div>
 
     {isSearching ? (
-      <div className="search-results">
-        <p className="results-label">Results for "{search}"</p>
+  // when searching and filterMode is 'artists', only show artists
+  <div className="search-results">
+    <p className="results-label">Results for "{search}"</p>
 
+    {filterMode === 'artists' ? (
+      <>
+        {filteredArtists.length > 0 ? (
+          <div className="artist-list">
+            {filteredArtists.map((artist) => (
+              <div key={artist.id} className="artist-card" onClick={() => navigate(`/artist/${artist.id}`)}>
+                <div className="artist-card-avatar"></div>
+                <div className="artist-card-info">
+                  <p className="artist-card-name">{artist.name}</p>
+                  <p className="artist-card-handle">{artist.handle}</p>
+                  <p className="artist-card-headline">{artist.headline}</p>
+                </div>
+                <button className="artist-follow-btn">Follow</button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="no-results">No artists found.</p>
+        )}
+      </>
+    ) : (
+      <>
         {filteredArtists.length > 0 && (
           <>
             <p className="search-section-label">Artists</p>
             <div className="artist-list">
               {filteredArtists.map((artist) => (
-                <div
-                  key={artist.id}
-                  className="artist-card"
-                  onClick={() => navigate(`/artist/${artist.id}`)}
-                >
+                <div key={artist.id} className="artist-card" onClick={() => navigate(`/artist/${artist.id}`)}>
                   <div className="artist-card-avatar"></div>
                   <div className="artist-card-info">
                     <p className="artist-card-name">{artist.name}</p>
@@ -218,18 +287,13 @@ export default function Home() {
             </div>
           </>
         )}
-
         {filteredPaintings.length > 0 && (
           <>
             <p className="search-section-label">Artworks</p>
             <div className="grid">
               {filteredPaintings.map((painting) => (
-                <div
-                  key={painting.id}
-                  className="card"
-                  onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
-                >
-                  <div className="card-image"></div>
+                <div key={painting.id} className="card" onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}>
+                  <img src={painting.images[0]} className="card-image" />
                   <div className="card-info">
                     <p className="card-title">{painting.title}</p>
                     <p className="card-artist">{painting.artist}</p>
@@ -239,50 +303,58 @@ export default function Home() {
             </div>
           </>
         )}
-
         {filteredArtists.length === 0 && filteredPaintings.length === 0 && (
           <p className="no-results">No results found.</p>
         )}
-      </div>
+      </>
+    )}
+  </div>
 
-    ) : filterMode === 'artists' ? (
-      <div className="search-results">
-        <div className="artist-list">
-          {allArtists.map((artist) => (
-            <div
-              key={artist.id}
-              className="artist-card"
-              onClick={() => navigate(`/artist/${artist.id}`)}
-            >
-              <div className="artist-card-avatar"></div>
-              <div className="artist-card-info">
-                <p className="artist-card-name">{artist.name}</p>
-                <p className="artist-card-handle">{artist.handle}</p>
-                <p className="artist-card-headline">{artist.headline}</p>
-              </div>
-              <button className="artist-follow-btn">Follow</button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-    ) : (
-      <div className="grid">
-        {paintings.map((painting) => (
-          <div
-            key={painting.id}
-            className="card"
-            onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
-          >
-            <div className="card-image"></div>
-            <div className="card-info">
-              <p className="card-title">{painting.title}</p>
-              <p className="card-artist">{painting.artist}</p>
-            </div>
+) : filterMode === 'artists' ? (
+  <div className="search-results">
+    <div className="artist-list">
+      {allArtists.map((artist) => (
+        <div key={artist.id} className="artist-card" onClick={() => navigate(`/artist/${artist.id}`)}>
+          <div className="artist-card-avatar"></div>
+          <div className="artist-card-info">
+            <p className="artist-card-name">{artist.name}</p>
+            <p className="artist-card-handle">{artist.handle}</p>
+            <p className="artist-card-headline">{artist.headline}</p>
           </div>
+          <button className="artist-follow-btn">Follow</button>
+        </div>
+      ))}
+    </div>
+  </div>
+
+) : (
+  <>
+    <div className="grid">
+      {paginated.map((painting) => (
+        <div key={painting.id} className="card" onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}>
+          <div className="card-image-wrapper">
+            <img src={painting.images[0]} alt="painting" className="card-image" />
+          </div>
+          <div className="card-info">
+            <p className="card-title">{painting.title}</p>
+            <p className="card-artist">{painting.artist}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+    {totalPages > 1 && (
+      <div className="pagination">
+        <button onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 1}>‹</button>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button key={i} className={currentPage === i + 1 ? 'page-active' : ''} onClick={() => setCurrentPage(i + 1)}>
+            {i + 1}
+          </button>
         ))}
+        <button onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage === totalPages}>›</button>
       </div>
     )}
+  </>
+)}
 
     {role === 'artist' && (
       <button className="fab" onClick={() => navigate('/post')}>+</button>
@@ -314,11 +386,13 @@ export default function Home() {
             className="modal-image-wrapper"
             onClick={() => {
               setSelectedPainting(null)
-              navigate(`/paintings/${selectedPainting.id}`, { state: { painting: selectedPainting } })
+              setTimeout(() => {
+                navigate(`/paintings/${selectedPainting.id}`, { state: { painting: selectedPainting } })
+              }, 200)
             }}
             style={{ cursor: 'pointer' }}
           >
-            <TiltImage />
+            <TiltImage src={selectedPainting.images?.[currentImage]}/>
 
             {selectedPainting.images?.length > 1 && (
               <div className="image-nav">
@@ -344,31 +418,70 @@ export default function Home() {
               <button
                 className="icon-btn"
                 onClick={() => {
-                  setIsLiked(!isLiked)
-                  setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
+                  const id = selectedPainting.id
+
+                  setInteractions(prev => {
+                    const curr = prev[id] || {
+                      liked: false,
+                      likeCount: 0,
+                      saved: false,
+                      saveCount: 0
+                    }
+
+                    return {
+                      ...prev,
+                      [id]: {
+                        ...curr,
+                        liked: !curr.liked,
+                        likeCount: curr.liked ? curr.likeCount - 1 : curr.likeCount + 1
+                      }
+                    }
+                  })
                 }}
               >
-                <img src={isLiked ? heartFilled : heartEmpty} alt="like" className="reaction-icon" />
-                <span>{likeCount}</span>
+                <img
+                  src={currentInteraction.liked ? heartFilled : heartEmpty}
+                  alt="like"
+                  className="reaction-icon"
+                />
+                <span>{currentInteraction.likeCount}</span>
               </button>
 
               <button
                 className="icon-btn"
                 onClick={() => {
-                  setIsSaved(!isSaved)
-                  setSaveCount(isSaved ? saveCount - 1 : saveCount + 1)
+                  const id = selectedPainting.id
+
+                  setInteractions(prev => {
+                    const curr = prev[id] || {
+                      liked: false,
+                      likeCount: 0,
+                      saved: false,
+                      saveCount: 0
+                    }
+
+                    return {
+                      ...prev,
+                      [id]: {
+                        ...curr,
+                        saved: !curr.saved,
+                        saveCount: curr.saved ? curr.saveCount - 1 : curr.saveCount + 1
+                      }
+                    }
+                  })
                 }}
               >
-                <img src={isSaved ? saveFilled : saveEmpty} alt="save" className="reaction-icon" />
-                <span>{saveCount}</span>
+                <img
+                  src={currentInteraction.saved ? saveFilled : saveEmpty}
+                  alt="save"
+                  className="reaction-icon"
+                />
+                <span>{currentInteraction.saveCount}</span>
               </button>
             </div>
 
             <h2 className="modal-title">{selectedPainting.title}</h2>
             <p className="modal-description">[Painting description]</p>
-            <div className="modal-meta">
-              <span>👁️ 0 Views</span>
-            </div>
           </div>
 
         </div>
