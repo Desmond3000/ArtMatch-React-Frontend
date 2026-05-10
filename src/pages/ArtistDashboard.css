@@ -219,3 +219,36 @@
 .dashboard-tab:hover:not(.active) {
   color: #1a1a2e;
 }
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.edit-painting-btn {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2px solid #e85d04;
+  background: transparent;
+  color: #e85d04;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-btn {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2px solid #cc0000;
+  background: transparent;
+  color: #cc0000;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #cc0000;
+  color: white;
+}

@@ -10,14 +10,9 @@ import saveEmpty from '../assets/Empty_bm.png'
 import saveFilled from '../assets/Full_bm.png'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import './ArtistDashboard.css'
+import { useApp } from '../context/AppContext'
 
-const paintings = Array(12).fill(null).map((_, i) => ({
-  id: i,
-  title: 'Title',
-  artist: 'Artist',
-  images: [null, null, null]
-}))
-
+// ── TiltImage OUTSIDE the main component ──
 function TiltImage() {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -60,20 +55,23 @@ function TiltImage() {
   )
 }
 
+// ── Single export ──
 export default function ArtistDashboard() {
   const navigate = useNavigate()
+  const { interactions, setInteractions, paintings, setPaintings } = useApp()
   const [selectedPainting, setSelectedPainting] = useState(null)
-  const [isLiked, setIsLiked] = useState(false)
-  const [likeCount, setLikeCount] = useState(0)
-  const [isSaved, setIsSaved] = useState(false)
-  const [saveCount, setSaveCount] = useState(0)
   const [activeTab, setActiveTab] = useState('mywork')
   const [currentImage, setCurrentImage] = useState(0)
+
   const savedPaintings = Array(8).fill(null).map((_, i) => ({
-  id: i + 100,
-  title: 'Saved Title',
-  artist: 'Other Artist',
+    id: i + 100,
+    title: 'Saved Title',
+    artist: 'Other Artist',
   }))
+
+  const currentInteraction = selectedPainting
+    ? interactions[selectedPainting.id] || { liked: false, likeCount: 0, saved: false, saveCount: 0 }
+    : null
 
   return (
     <div className="page">
@@ -113,35 +111,52 @@ export default function ArtistDashboard() {
         </div>
 
         <div className="grid-section">
-          {/* Tabs */}
           <div className="dashboard-tabs">
             <button
               className={`dashboard-tab ${activeTab === 'mywork' ? 'active' : ''}`}
               onClick={() => setActiveTab('mywork')}
             >
-            My Artworks
+              My Artworks
             </button>
-          <button
-            className={`dashboard-tab ${activeTab === 'saved' ? 'active' : ''}`}
-            onClick={() => setActiveTab('saved')}
-          >
-          Saved
-        </button>
-      </div>
-
-      <div className="grid">
-        {(activeTab === 'mywork' ? paintings : savedPaintings).map((painting) => (
-            <div
-            className="card"
-            key={painting.id}
-            onClick={() => {setSelectedPainting(painting); setCurrentImage(0)}}
+            <button
+              className={`dashboard-tab ${activeTab === 'saved' ? 'active' : ''}`}
+              onClick={() => setActiveTab('saved')}
             >
-            <div className="card-image"></div>
+              Saved
+            </button>
+          </div>
+
+          <div className="grid">
+            {(activeTab === 'mywork' ? paintings : savedPaintings).map((painting) => (
+                          <div
+              className="card"
+              key={painting.id}
+              onClick={() => { setSelectedPainting(painting); setCurrentImage(0) }}
+            >
+              <div className="card-image-wrapper">
+                <img src={painting.images?.[0]} alt={painting.title} className="card-image" />
+              </div>
               <div className="card-info">
-              <p className="card-title">{painting.title}</p>
-              {activeTab === 'saved' && (
-              <p className="card-artist">{painting.artist}</p>
-              )}
+                <p className="card-title">{painting.title}</p>
+                {activeTab === 'saved' && (
+                  <p className="card-artist">{painting.artist}</p>
+                )}
+                {activeTab === 'mywork' && (
+                  <div className="card-actions" onClick={e => e.stopPropagation()}>
+                    <button
+                      className="edit-painting-btn"
+                      onClick={() => navigate('/edit-painting', { state: { painting } })}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => setPaintings(prev => prev.filter(p => p.id !== painting.id))}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
             ))}
@@ -205,29 +220,58 @@ export default function ArtistDashboard() {
                 <button
                   className="icon-btn"
                   onClick={() => {
-                    setIsLiked(!isLiked)
-                    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
+                    const id = selectedPainting.id
+                    setInteractions(prev => {
+                      const curr = prev[id] || { liked: false, likeCount: 0, saved: false, saveCount: 0 }
+                      return {
+                        ...prev,
+                        [id]: {
+                          ...curr,
+                          liked: !curr.liked,
+                          likeCount: curr.liked ? curr.likeCount - 1 : curr.likeCount + 1
+                        }
+                      }
+                    })
                   }}
                 >
-                  <img src={isLiked ? heartFilled : heartEmpty} alt="like" className="reaction-icon" />
-                  <span>{likeCount}</span>
+                  <img
+                    src={currentInteraction.liked ? heartFilled : heartEmpty}
+                    alt="like"
+                    className="reaction-icon"
+                  />
+                  <span>{currentInteraction.likeCount}</span>
                 </button>
 
                 <button
                   className="icon-btn"
                   onClick={() => {
-                    setIsSaved(!isSaved)
-                    setSaveCount(isSaved ? saveCount - 1 : saveCount + 1)
+                    const id = selectedPainting.id
+                    setInteractions(prev => {
+                      const curr = prev[id] || { liked: false, likeCount: 0, saved: false, saveCount: 0 }
+                      return {
+                        ...prev,
+                        [id]: {
+                          ...curr,
+                          saved: !curr.saved,
+                          saveCount: curr.saved ? curr.saveCount - 1 : curr.saveCount + 1
+                        }
+                      }
+                    })
                   }}
                 >
-                  <img src={isSaved ? saveFilled : saveEmpty} alt="save" className="reaction-icon" />
-                  <span>{saveCount}</span>
+                  <img
+                    src={currentInteraction.saved ? saveFilled : saveEmpty}
+                    alt="save"
+                    className="reaction-icon"
+                  />
+                  <span>{currentInteraction.saveCount}</span>
                 </button>
               </div>
 
               <h2 className="modal-title">{selectedPainting.title}</h2>
               <p className="modal-description">[Painting description goes here]</p>
             </div>
+
           </div>
         </div>
       )}

@@ -1,9 +1,13 @@
 import { motion } from 'framer-motion'
 import avatar4 from '../assets/Kurt.png'
+import avatar1 from '../assets/Jorge.webp'
+import avatar2 from '../assets/Clara.webp'
+import avatar3 from '../assets/Joseph.webp'
+
 const avatars = [
-  { name: 'Jorge Creiann A. Jarme', img: null },
-  { name: 'Clara Jhoanne C. Oguan', img: null },
-  { name: 'Joseph Aaron T. Velarde', img: null },
+  { name: 'Jorge Creiann A. Jarme', img: avatar1 },
+  { name: 'Clara Jhoanne C. Oguan', img: avatar2 },
+  { name: 'Joseph Aaron T. Velarde', img: avatar3 },
   { name: 'Kurt Desmond G. Rosana', img: avatar4 },
 ]
 

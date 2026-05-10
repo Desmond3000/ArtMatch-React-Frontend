@@ -170,7 +170,7 @@ export default function Home() {
       </video>
 
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-        <Link to="/home">
+        <Link to="/paintings">
           <img src={logo} alt="ArtMatch Logo" className="logo" />
         </Link>
         <div className="profile-wrapper">

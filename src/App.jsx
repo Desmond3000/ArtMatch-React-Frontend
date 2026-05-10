@@ -10,6 +10,7 @@ import ViewerProfile from './pages/ViewerProfile'
 import ArtistProfile from './pages/ArtistProfile'
 import PaintingDetail from './pages/PaintingDetail'
 import Post from './pages/Post'
+import EditPainting from './pages/EditPainting'
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/viewer-profile" element={<ViewerProfile />} />
         <Route path="/artist/:id" element={<ArtistProfile />} />
         <Route path="/Post" element={<Post/>}/>
+        <Route path="/edit-painting" element={<EditPainting />} />
         <Route path="/paintings/:id" element={<PaintingDetail />} />
       </Routes>
     </BrowserRouter>

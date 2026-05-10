@@ -1,0 +1,93 @@
+.post-page {
+  min-height: 100vh;
+  padding: 60px 40px;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-page h1 {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.post-page input,
+.post-page textarea,
+.post-page select {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  font-size: 15px;
+  font-family: 'JosefinSans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fafafa;
+  color: #1a1a1a;
+}
+
+.post-page input:focus,
+.post-page textarea:focus,
+.post-page select:focus {
+  border-color: #e85d04;
+  background: white;
+}
+
+.post-page textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.post-page select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.post-page .btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.post-page .btn-save {
+  flex: 1;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  background: #e85d04;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.post-page .btn-save:hover {
+  background: #cf4f00;
+}
+
+.post-page .btn-cancel {
+  flex: 1;
+  padding: 14px;
+  border-radius: 999px;
+  border: 2px solid #ddd;
+  background: transparent;
+  color: #666;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.post-page .btn-cancel:hover {
+  border-color: #999;
+  color: #333;
+}
