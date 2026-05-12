@@ -73,6 +73,23 @@ export default function RoleSelect() {
             </ul>
             <button className="role-btn artist-btn">Continue as Artist</button>
           </motion.div>
+            <motion.div
+              className="role-card"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => handleSelect('admin')}
+            >
+              <div className="role-icon">🛡️</div>
+              <h2>Admin</h2>
+              <p>Manage and moderate platform content to maintain quality.</p>
+              <ul className="role-perks">
+                <li>✓ Browse artwork</li>
+                <li>✓ Remove inappropriate content</li>
+                <li>✓ Manage users</li>
+                <li>✓ Full platform access</li>
+              </ul>
+              <button className="role-btn artist-btn">Continue as Admin</button>
+            </motion.div>
         </div>
       </div>
     </motion.div>

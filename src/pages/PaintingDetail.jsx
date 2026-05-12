@@ -9,8 +9,6 @@ import saveFilled from '../assets/Full_bm.png'
 import { motion } from 'framer-motion' // ← only keep motion, remove the rest
 import './PaintingDetail.css'
 
-// ← TiltImage function completely removed
-
 export default function PaintingDetail() {
   const navigate = useNavigate()
   const { state } = useLocation()

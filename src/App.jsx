@@ -11,7 +11,7 @@ import ArtistProfile from './pages/ArtistProfile'
 import PaintingDetail from './pages/PaintingDetail'
 import Post from './pages/Post'
 import EditPainting from './pages/EditPainting'
-
+import Admin from './pages/Admin'
 export default function App() {
   return (
     <BrowserRouter>
@@ -28,6 +28,7 @@ export default function App() {
         <Route path="/Post" element={<Post/>}/>
         <Route path="/edit-painting" element={<EditPainting />} />
         <Route path="/paintings/:id" element={<PaintingDetail />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   )

@@ -72,7 +72,7 @@ export default function Login() {
 
           <button className="btn" onClick={login}>LOGIN</button>
           <p className="register-link">
-            <Link to="/register">Create New Account</Link>
+            <Link to="/role-select">Create New Account</Link>
           </p>
         </div>
       </div>

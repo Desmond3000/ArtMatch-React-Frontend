@@ -145,7 +145,9 @@ export default function Home() {
 
 
   const handleProfileClick = () => {
-    role === 'artist' ? navigate('/artist-dashboard') : navigate('/viewer-profile')
+    if (role === 'artist') navigate('/artist-dashboard')
+    else if (role === 'admin') navigate('/admin')
+    else navigate('/viewer-profile')
   }
 
   const handleFilterChange = (key, value) => {

@@ -1,0 +1,137 @@
+.admin-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.admin-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.admin-badge {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: #1a1a2e;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 50px;
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.admin-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.admin-header {
+  margin-bottom: 24px;
+}
+
+.admin-title {
+  font-family: 'ClimateCrisis', sans-serif;
+  font-size: 2rem;
+  color: #1a1a2e;
+  margin: 0 0 4px;
+}
+
+.admin-subtitle {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.admin-empty {
+  text-align: center;
+  padding: 80px;
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.admin-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.admin-card-image {
+  width: 80px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.admin-card-info {
+  flex: 1;
+}
+
+.admin-card-title {
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.admin-card-artist {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.8rem;
+  color: #888;
+  margin: 2px 0;
+}
+
+.admin-card-reports {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 0.8rem;
+  color: #FE5D26;
+  font-weight: 700;
+  margin: 0;
+}
+
+.admin-remove-btn {
+  padding: 8px 20px;
+  background: transparent;
+  border: 1.5px solid #ff0000;
+  color: #ff0000;
+  border-radius: 50px;
+  font-family: 'JosefinSans', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.admin-remove-btn:hover {
+  background: #ff0000;
+  color: white;
+}
